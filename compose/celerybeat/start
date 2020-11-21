@@ -1,0 +1,4 @@
+#!/bin/sh
+
+rm -f './celerybeat.pid'
+celery -A taskapp beat -l info

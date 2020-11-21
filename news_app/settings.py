@@ -39,7 +39,7 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-LOCAL_APPS = ["fetch_news"]
+LOCAL_APPS = ["fetch_news.apps.FetchNewsConfig"]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 
@@ -126,3 +126,11 @@ STATIC_URL = '/static/'
 ADMINS = [
     ("""aalap""", "aalapjethwa@gmail.com"),
 ]
+
+# Celery broker config.
+# Reference: https://www.revsys.com/tidbits/celery-and-django-and-docker-oh-my/
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

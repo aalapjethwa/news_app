@@ -16,3 +16,21 @@ services:
       - "8000:8000"
     depends_on:
       - db
+  redis:
+    image: "redis:alpine"
+  celery:
+    build: .
+    command: /start-celery
+    volumes:
+      - .:/newsapp
+    depends_on:
+      - db
+      - redis
+  celery-beat:
+    build: .
+    command: /start-celerybeat
+    volumes:
+      - .:/newsapp
+    depends_on:
+      - db
+      - redis
