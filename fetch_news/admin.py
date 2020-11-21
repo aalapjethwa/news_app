@@ -23,6 +23,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
     def get_categories(self, obj):
         return list(obj.categories.values_list('name', flat=True))
+    get_categories.short_description = "Categories"
 
 
 admin.site.register(NewsAPI, NewsAPIAdmin)

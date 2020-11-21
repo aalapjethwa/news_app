@@ -46,6 +46,8 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 
+AUTH_USER_MODEL = 'users.User'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -77,7 +79,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'news_app.wsgi.application'
 
 
-# Database
+# sqlite Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
@@ -87,7 +89,17 @@ DATABASES = {
     }
 }
 
-
+# PostgreSQL database connection
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'db',
+        'PORT': 5432,
+    }
+}
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 

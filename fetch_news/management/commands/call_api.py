@@ -3,7 +3,6 @@ import time
 
 import requests
 
-from django.db.models import Q
 from django.conf import settings
 from fetch_news.models import NewsAPI, Article, Category
 from django.core.management.base import BaseCommand
@@ -24,6 +23,29 @@ def set_categories(bulk_ref):
         article.categories.add(*category_list)
 
 
+def load_articles(map_db_parameter, response_json):
+    bulk_ref = time.time()
+    article_list = []
+    for text in response_json:
+        try:
+            query_dict = {}
+            for p in map_db_parameter:
+                query_dict[p["db_parameter"]] = text.get(p["api_parameter"])
+            article_list.append(
+                Article(
+                    title=query_dict.get("title"),
+                    description=query_dict.get("description"),
+                    content=query_dict.get("content"),
+                    bulk_ref=bulk_ref,
+                )
+            )
+        except Exception as e:
+            print("Excpetion occured in fetch data:", e)
+    Article.objects.bulk_create(article_list)
+    print("Articles created")
+    set_categories(bulk_ref)
+
+
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
@@ -33,26 +55,12 @@ class Command(BaseCommand):
             if response.status_code == 200:
                 response_text = json.loads(response.text)
                 if response_text.get("articles") and api.map_db_parameter.exists():
-                    bulk_ref = time.time()
-                    article_list = []
-                    for text in response_text["articles"]:
-                        try:
-                            query_dict = {}
-                            for p in api.map_db_parameter.filter(active=True):
-                                query_dict[p.db_parameter] = text.get(p.api_parameter)
-                            article_list.append(
-                                Article(
-                                    title=query_dict.get("title"),
-                                    description=query_dict.get("description"),
-                                    content=query_dict.get("content"),
-                                    bulk_ref=bulk_ref,
-                                )
-                            )
-                        except Exception as e:
-                            print("Excpetion occured in fetch data:", e)
-                    Article.objects.bulk_create(article_list)
-                    print("Articles created")
-                    set_categories(bulk_ref)
+                    map_db_parameter = list(api.map_db_parameter.filter(
+                        active=True
+                    ).values('db_parameter', 'api_parameter'))
+                    print(map_db_parameter)
+                    print(type(map_db_parameter))
+                    load_articles(map_db_parameter, response_text['articles'])
                 else:
                     print("response_text: ", response_text)
             else:

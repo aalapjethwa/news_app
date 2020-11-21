@@ -3,6 +3,7 @@ import time
 
 import requests
 from celery.task import periodic_task
+from celery import shared_task
 from celery.schedules import crontab
 
 from django.db.models import Q
@@ -15,6 +16,7 @@ def hearbeat():
     print("Working....")
 
 
+@shared_task
 def set_categories(bulk_ref):
     ''' Sets category of articles using string search. '''
     categories = Category.objects.values('id','name')
@@ -32,7 +34,32 @@ def set_categories(bulk_ref):
             article.categories.add(*category_list)
     except:
         return False
+    print("Articles Categorized.")
     return True
+
+
+@shared_task
+def load_articles(map_db_parameter, response_json):
+    bulk_ref = time.time()
+    article_list = []
+    for text in response_json:
+        try:
+            query_dict = {}
+            for p in map_db_parameter:
+                query_dict[p["db_parameter"]] = text.get(p["api_parameter"])
+            article_list.append(
+                Article(
+                    title=query_dict.get("title"),
+                    description=query_dict.get("description"),
+                    content=query_dict.get("content"),
+                    bulk_ref=bulk_ref,
+                )
+            )
+        except Exception as e:
+            print("Excpetion occured in fetch data:", e)
+    Article.objects.bulk_create(article_list)
+    set_categories.delay(bulk_ref)
+    print("Articles created.")
 
 
 @periodic_task(run_every=crontab(minute="*/1"))
@@ -44,26 +71,11 @@ def articles_etl():
         if response.status_code == 200:
             response_text = json.loads(response.text)
             if response_text.get("articles") and api.map_db_parameter.exists():
-                bulk_ref = time.time()
-                article_list = []
-                for text in response_text["articles"]:
-                    try:
-                        query_dict = {}
-                        for p in api.map_db_parameter.filter(active=True):
-                            query_dict[p.db_parameter] = text.get(p.api_parameter)
-                        article_list.append(
-                            Article(
-                                title=query_dict.get("title"),
-                                description=query_dict.get("description"),
-                                content=query_dict.get("content"),
-                                bulk_ref=bulk_ref,
-                            )
-                        )
-                    except Exception as e:
-                        print("Excpetion occured in fetch data:", e)
-                Article.objects.bulk_create(article_list)
-                print("Articles created")
-                set_categories(bulk_ref)
+                map_db_parameter = list(api.map_db_parameter.filter(
+                    active=True
+                ).values('db_parameter', 'api_parameter'))
+                load_articles.delay(map_db_parameter, response_text['articles'])
+                print("API data fetched.")
             else:
                 print("response_text: ", response_text)
         else:

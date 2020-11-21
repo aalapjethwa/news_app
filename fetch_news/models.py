@@ -1,12 +1,5 @@
 from django.db import models
-
-
-DB_PARAMETERS = (
-    ("title", "title"),
-    ("categories", "categories"),
-    ("description", "description"),
-    ("content", "content")
-)
+from constants.fetch_news import DB_PARAMETERS
 
 
 class NewsAPI(models.Model):
