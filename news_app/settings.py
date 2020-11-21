@@ -39,7 +39,10 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-LOCAL_APPS = ["fetch_news.apps.FetchNewsConfig"]
+LOCAL_APPS = [
+    "fetch_news.apps.FetchNewsConfig",
+    "users.apps.UsersConfig",
+]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 

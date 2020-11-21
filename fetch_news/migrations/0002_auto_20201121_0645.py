@@ -6,7 +6,10 @@ from django.db import migrations
 def add_predefined_category(apps, schema_editor):
     Category = apps.get_model("fetch_news", "Category")
     category_list = []
-    for cat in ['Social', 'Political', 'Sports', 'Educational', 'Tech']:
+    predefined_category = [
+        'Social', 'Political', 'Sports', 'Educational', 'Tech', 'General'
+    ]
+    for cat in predefined_category:
         category_list.append(Category(name=cat))
     Category.objects.bulk_create(category_list)
     return

@@ -17,7 +17,12 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ArticleAdmin(admin.ModelAdmin):
-    pass
+    exclude = ('bulk_ref', )
+    list_display = ('title', 'get_categories')
+    list_filter = ('last_updated_at', 'created_at', 'categories__name')
+
+    def get_categories(self, obj):
+        return list(obj.categories.values_list('name', flat=True))
 
 
 admin.site.register(NewsAPI, NewsAPIAdmin)

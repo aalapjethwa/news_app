@@ -1,6 +1,14 @@
 from django.db import models
 
 
+DB_PARAMETERS = (
+    ("title", "title"),
+    ("categories", "categories"),
+    ("description", "description"),
+    ("content", "content")
+)
+
+
 class NewsAPI(models.Model):
     api_name = models.CharField(max_length=100, unique=True)
     api_url = models.URLField()
@@ -18,20 +26,22 @@ class NewsAPI(models.Model):
         verbose_name = "NewsAPI"
         verbose_name_plural = "NewsAPIs"
 
+    def request_url(self):
+        url = f"{self.api_url}?"
+        if self.api_parameters:
+            url += f"{self.api_parameters}"
+        if self.api_key_paramter and self.api_key_token:
+            url += f"&{self.api_key_paramter}={self.api_key_token}"
+        return url
+
 
 class MapDBParameter(models.Model):
-    DB_PARAMETER = (
-        ("title", "title"),
-        ("categories", "categories"),
-        ("description", "description"),
-        ("content", "content")
-    )
     news_api = models.ForeignKey(
         NewsAPI, on_delete=models.CASCADE, related_name="map_db_parameter"
     )
     api_parameter = models.CharField(max_length=100)
     db_parameter = models.CharField(
-        max_length=100, choices=DB_PARAMETER, db_index=True
+        max_length=100, choices=DB_PARAMETERS, db_index=True
     )
     active = models.BooleanField(default=True, db_index=True)
 
@@ -59,9 +69,13 @@ class Article(models.Model):
         Category, blank=True, related_name="articles"
     )
     description = models.TextField()
-    content = models.TextField()
+    content = models.TextField(null=True, blank=True)
+    bulk_ref = models.CharField(max_length=50, null=True, blank=True)
     last_updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def full_search_text(self):
+        return self.title + self.description + (self.content or "")
 
     def __str__(self):
         return self.title
