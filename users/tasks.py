@@ -7,12 +7,15 @@ from fetch_news.models import Article
 
 
 @shared_task
-def notify_user(user_email, article_list):
+def notify_user(user_email, article_list, category):
     articles = Article.objects.filter(
         id__in=article_list
     ).values('id', 'title')
     if articles:
-        context = {'articles': articles, 'site_url': settings.SITE_URL}
+        context = {
+            'articles': articles, 'site_url': settings.SITE_URL,
+            'category': category
+        }
         html_content = get_template(
             'mail_templates/notify_news.html'
         ).render(context)

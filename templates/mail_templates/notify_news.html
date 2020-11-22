@@ -1,7 +1,8 @@
 <html>
   <head></head>
   <body>
-    <h2> New articles have been arrived, please find the links below: </h2>
+    <h2> New articles have arrived for <b>{{category}}</b> category</h2>
+    <h2> Please click the links below for more details: </h2>
     {% for article in articles %}
       <a href="{{site_url}}{% url 'article_detail' article.id %}">{{article.title}}</a>
       <br>

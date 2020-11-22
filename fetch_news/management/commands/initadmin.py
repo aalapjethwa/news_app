@@ -14,7 +14,7 @@ class Command(BaseCommand):
                 username = user[0].replace(' ', '')
                 email = user[1]
                 password = 'admin'
-                print('Creating account for %s (%s)' % (username, email))
+                print(f'Creating account for {username} {email}')
                 admin = User.objects.create_superuser(email=email, username=username, password=password)
                 admin.is_active = True
                 admin.is_admin = True

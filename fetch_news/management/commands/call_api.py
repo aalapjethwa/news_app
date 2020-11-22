@@ -58,8 +58,6 @@ class Command(BaseCommand):
                     map_db_parameter = list(api.map_db_parameter.filter(
                         active=True
                     ).values('db_parameter', 'api_parameter'))
-                    print(map_db_parameter)
-                    print(type(map_db_parameter))
                     load_articles(map_db_parameter, response_text['articles'])
                 else:
                     print("response_text: ", response_text)

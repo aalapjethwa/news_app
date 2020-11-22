@@ -29,3 +29,4 @@ class ArticleAdmin(admin.ModelAdmin):
 admin.site.register(NewsAPI, NewsAPIAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Article, ArticleAdmin)
+admin.site.register(TaskQueue)

@@ -8,7 +8,7 @@ from celery.schedules import crontab
 
 from django.db.models import Q
 from django.conf import settings
-from fetch_news.models import NewsAPI, Article, Category
+from fetch_news.models import NewsAPI, Article, Category, TaskQueue
 
 
 @periodic_task(run_every=crontab(minute="*/1"))
@@ -20,8 +20,8 @@ def hearbeat():
 def set_categories(bulk_ref):
     ''' Sets category of articles using string search. '''
     categories = Category.objects.values('id','name')
-    try:
-        for article in Article.objects.filter(bulk_ref=bulk_ref):
+    for article in Article.objects.filter(bulk_ref=bulk_ref):
+        try:
             search_text = article.full_search_text()
             category_list = []
             for cat in categories:
@@ -32,9 +32,10 @@ def set_categories(bulk_ref):
             if not category_list:
                 category_list = [default_id]
             article.categories.add(*category_list)
-    except:
-        return False
+        except Exception as e:
+            print("Exception occurred: ", e)
     print("Articles Categorized.")
+    TaskQueue.objects.create(bulk_ref=bulk_ref)
     return True
 
 

@@ -51,6 +51,14 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def article_list(self):
+        return self.articles.values_list('id', flat=True)
+
+    @property
+    def user_emails(self):
+        return self.user.values_list('email', flat=True)
+
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
@@ -68,7 +76,17 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def full_search_text(self):
-        return self.title + self.description + (self.content or "")
+        return self.title + (self.description or "") + (self.content or "")
 
     def __str__(self):
         return self.title
+
+
+class TaskQueue(models.Model):
+    bulk_ref = models.CharField(max_length=50)
+    is_finished = models.BooleanField(default=False, db_index=True)
+    last_updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.bulk_ref

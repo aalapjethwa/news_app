@@ -156,6 +156,9 @@ CELERY_RESULT_BACKEND = 'redis://redis:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ALWAYS_EAGER = False
+CELERYD_TASK_TIME_LIMIT = 5 * 60
+CELERYD_TASK_SOFT_TIME_LIMIT = 60
 
 # Setup Email backend: https://data-flair.training/blogs/django-send-email/
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
