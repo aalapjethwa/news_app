@@ -5,7 +5,7 @@ from django.conf import settings
 from django.apps import apps, AppConfig
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'news_app.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'news_app.settings.local')
 
 app = Celery('news_app')
 app.config_from_object('django.conf:settings', namespace='CELERY')

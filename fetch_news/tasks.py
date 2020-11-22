@@ -63,10 +63,10 @@ def load_articles(map_db_parameter, response_json):
     print("Articles created.")
 
 
-@periodic_task(run_every=crontab(minute="*/1"))
+@periodic_task(run_every=crontab(minute="*/30"))
 def articles_etl():
     categories = Category.objects.values('id','name')
-    for api in NewsAPI.objects.all():
+    for api in NewsAPI.objects.filter(active=True):
         url = api.request_url()
         response = requests.get(url)
         if response.status_code == 200:

@@ -16,6 +16,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    env_file:
+      - ./.env
   redis:
     image: "redis:alpine"
   celery:
@@ -26,6 +28,8 @@ services:
     depends_on:
       - db
       - redis
+    env_file:
+      - ./.env
   celery-beat:
     build: .
     command: /start-celerybeat
@@ -34,3 +38,5 @@ services:
     depends_on:
       - db
       - redis
+    env_file:
+      - ./.env

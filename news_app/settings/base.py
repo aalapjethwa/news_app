@@ -31,7 +31,7 @@ SECRET_KEY = '19*!!1mjkqv)cvo(har6#_l&(49j8#lzgge4&hd#@5y4p(87$@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG', default=False)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -96,17 +96,6 @@ DATABASES = {
     }
 }
 
-# PostgreSQL database connection
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('POSTGRES_DB'),
-        'USER': env('POSTGRES_USER'),
-        'PASSWORD': env('POSTGRES_PASSWORD'),
-        'HOST': env('POSTGRES_HOST'),
-        'PORT': 5432,
-    }
-}
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -165,8 +154,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default="")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-
-SITE_URL = "http://localhost:8000"
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default="")
