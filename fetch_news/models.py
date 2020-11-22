@@ -61,7 +61,7 @@ class Article(models.Model):
     categories = models.ManyToManyField(
         Category, blank=True, related_name="articles"
     )
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     content = models.TextField(null=True, blank=True)
     bulk_ref = models.CharField(max_length=50, null=True, blank=True)
     last_updated_at = models.DateTimeField(auto_now=True)
