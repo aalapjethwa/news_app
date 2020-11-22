@@ -245,6 +245,6 @@ response_text = {
 }
 if response_text.get("articles"):
 	for text in response_text["articles"]:
-		print(text.get("title"))
-		print(text.get("content"))
-		print("----------------")
+		title = text.get("title")
+		content = text.get("content")
+		description = text.get("description")
